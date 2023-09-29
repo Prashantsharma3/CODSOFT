@@ -1,0 +1,207 @@
+# Import Tkinter module
+import tkinter as tk
+from tkinter import messagebox
+
+# Create a class for Contact
+class Contact:
+    def __init__(self, name, phone, email, address):
+        self.name = name
+        self.phone = phone
+        self.email = email
+        self.address = address
+
+    def __str__(self):
+        return f"{self.name} | {self.phone} | {self.email} | {self.address}"
+
+# Create a list to store contacts
+contacts = []
+
+# Create a function to add a new contact
+def add_contact():
+    # Get the user input from the entry fields
+    name = name_entry.get()
+    phone = phone_entry.get()
+    email = email_entry.get()
+    address = address_entry.get()
+
+    # Validate the user input
+    if name == "" or phone == "" or email == "" or address == "":
+        messagebox.showerror("Error", "Please fill in all the fields")
+        return
+
+    # Create a new contact object
+    new_contact = Contact(name, phone, email, address)
+
+    # Add the contact to the list
+    contacts.append(new_contact)
+
+    # Clear the entry fields
+    name_entry.delete(0, tk.END)
+    phone_entry.delete(0, tk.END)
+    email_entry.delete(0, tk.END)
+    address_entry.delete(0, tk.END)
+
+    # Show a success message
+    messagebox.showinfo("Success", "Contact added successfully")
+
+# Create a function to view the contact list
+def view_contacts():
+    # Create a new window
+    view_window = tk.Toplevel(root)
+    view_window.title("Contact List")
+
+    # Create a text widget to display the contacts
+    text = tk.Text(view_window)
+    text.pack()
+
+    # Loop through the contacts and insert them into the text widget
+    for contact in contacts:
+        text.insert(tk.END, str(contact) + "\n")
+
+# Create a function to search for a contact by name or phone number
+def search_contact():
+    # Get the user input from the entry field
+    query = search_entry.get()
+
+    # Validate the user input
+    if query == "":
+        messagebox.showerror("Error", "Please enter a name or phone number")
+        return
+
+    # Create a new window
+    search_window = tk.Toplevel(root)
+    search_window.title("Search Result")
+
+    # Create a text widget to display the result
+    text = tk.Text(search_window)
+    text.pack()
+
+    # Loop through the contacts and check if they match the query
+    found = False
+    for contact in contacts:
+        if query.lower() in contact.name.lower() or query in contact.phone:
+            text.insert(tk.END, str(contact) + "\n")
+            found = True
+
+    # If no match is found, show a message
+    if not found:
+        text.insert(tk.END, "No contact found")
+
+# Create a function to update a contact by name
+def update_contact():
+    # Get the user input from the entry fields
+    name = name_entry.get()
+    phone = phone_entry.get()
+    email = email_entry.get()
+    address = address_entry.get()
+
+    # Validate the user input
+    if name == "":
+        messagebox.showerror("Error", "Please enter a name")
+        return
+
+    # Loop through the contacts and check if they match the name
+    updated = False
+    for contact in contacts:
+        if contact.name.lower() == name.lower():
+            # Update the contact details with the user input
+            contact.phone = phone if phone != "" else contact.phone
+            contact.email = email if email != "" else contact.email
+            contact.address = address if address != "" else contact.address
+
+            # Clear the entry fields
+            name_entry.delete(0, tk.END)
+            phone_entry.delete(0, tk.END)
+            email_entry.delete(0, tk.END)
+            address_entry.delete(0, tk.END)
+
+            # Show a success message
+            messagebox.showinfo("Success", "Contact updated successfully")
+            updated = True
+
+            break
+
+     # If no match is found, show an error message       
+        if not updated:
+         messagebox.showerror("Error", "No contact with that name")
+
+# Create a function to delete a contact by name
+def delete_contact():
+     # Get the user input from the entry field
+     name = name_entry.get()
+
+     # Validate the user input
+     if name == "":
+         messagebox.showerror("Error", "Please enter a name")
+         return
+
+     # Loop through the contacts and check if they match the name     
+     deleted = False     
+     for i in range(len(contacts)):
+         if contacts[i].name.lower() == name.lower():
+             # Delete the contact from the list             
+             del contacts[i]
+
+             # Clear the entry field             
+             name_entry.delete(0, tk.END)
+
+             # Show a success message             
+             messagebox.showinfo("Success", "Contact deleted successfully")
+             deleted = True
+
+             break
+
+     # If no match is found, show an error message     
+     if not deleted:
+         messagebox.showerror("Error", "No contact with that name")
+
+# Create the main window
+root = tk.Tk()
+root.title("Contact Book")
+
+# Create a frame to hold the widgets
+frame = tk.Frame(root)
+frame.pack(padx=10, pady=10)
+
+# Create labels for the entry fields
+name_label = tk.Label(frame, text="Name:")
+name_label.grid(row=0, column=0, sticky=tk.W)
+phone_label = tk.Label(frame, text="Phone:")
+phone_label.grid(row=1, column=0, sticky=tk.W)
+email_label = tk.Label(frame, text="Email:")
+email_label.grid(row=2, column=0, sticky=tk.W)
+address_label = tk.Label(frame, text="Address:")
+address_label.grid(row=3, column=0, sticky=tk.W)
+
+# Create entry fields for the contact details
+name_entry = tk.Entry(frame)
+name_entry.grid(row=0, column=1)
+phone_entry = tk.Entry(frame)
+phone_entry.grid(row=1, column=1)
+email_entry = tk.Entry(frame)
+email_entry.grid(row=2, column=1)
+address_entry = tk.Entry(frame)
+address_entry.grid(row=3, column=1)
+
+# Create buttons for the operations
+add_button = tk.Button(frame, text="Add Contact", command=add_contact)
+add_button.grid(row=4, column=0, pady=10)
+view_button = tk.Button(frame, text="View Contacts", command=view_contacts)
+view_button.grid(row=4, column=1)
+update_button = tk.Button(frame, text="Update Contact", command=update_contact)
+update_button.grid(row=5, column=0)
+delete_button = tk.Button(frame, text="Delete Contact", command=delete_contact)
+delete_button.grid(row=5, column=1)
+
+# Create a label and an entry field for the search function
+search_label = tk.Label(frame, text="Search by name or phone:")
+search_label.grid(row=6, column=0, pady=10, sticky=tk.W)
+search_entry = tk.Entry(frame)
+search_entry.grid(row=6, column=1)
+
+# Create a button for the search function
+search_button = tk.Button(frame, text="Search Contact", command=search_contact)
+search_button.grid(row=7, columnspan=2)
+
+# Start the main loop
+root.mainloop()
